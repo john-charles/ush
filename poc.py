@@ -1,5 +1,99 @@
 #!/usr/bin/env python
 
+class String:
+    value = None
+
+    def __init__(self, value):
+        self.value = value
+
+class Number:
+    value = None
+
+    def __init__(self, value):
+        self.value = value
+
+class Boolean:
+    value = None
+
+    def __init__(self, value):
+        value = value
+
+class Array:
+
+    value = None
+
+    def __init__(self):
+        self.value = []
+
+class Map:
+
+    value = None
+
+    def __init__(self):
+        self.value = {}
+
+class Function:
+
+    name = None
+    statements = None
+
+    def __init__(self, name, statements):
+        self.name = name
+        self.statements = statements
+
+    def evaluate(self, scope):
+        pass
+
+
+class Scope:
+
+    parent = None
+    values = None
+    commands = None
+
+    def __init__(self, parent):
+        self.parent = parent
+        self.values = {}
+        self.commands = {}
+
+    def resolve_value(self, key):
+
+        if key in self.values:
+            return self.values[key]
+        elif self.parent:
+            return self.parent.resolve_value(key)
+        else:
+            return None
+
+    def resolve_command(self, key):
+
+        if key in self.commands:
+            return self.commands[key]
+        elif self.parent:
+            return self.parent.resolve_command(key)
+        else:
+            return None
+
+    def assign_value(self, key, value):
+        self.values[key] = value
+
+    def assign_command(self, key, command):
+        self.commands[key] = command
+
+class Statement:
+
+    parts = None
+
+    def __init__(self, parts):
+        self.parts = parts
+
+    def evaluate(self, scope):
+        pass
+
+
+
+
+
 class WordReader:
 
     stream = None
@@ -104,14 +198,34 @@ class Processor:
         self.functions = {
         }
 
+        self.values = {}
+
+    def evaluate_single_statement(self, statement):
+
+        if statement[0][0] == '$' and len(statement) == 3 and statement[1] == '=':
+            self.values[statement[0]] = statement[2]
+
+        
+
+
     def evaluate(self, statement):
 
         print "Evaluating statement: ", statement
 
         if len(statement) == 1 and isinstance(statement[0], dict):
             print "Evaluating a block generator...."
+            
+            generator = statement[0]
+
+            if 'name' in generator:
+                self.functions[generator['name']] = generator
+
+
+            
         else:
             print "Evaluating a standard statement..."
+
+
 
     def collect_statement_until(self, end):
 
