@@ -84,6 +84,9 @@ class WordReader:
                 return char
             elif char not in eow and char not in self.eos:
                 word += char
+
+    def put_word(self, word):
+        self.last_words.append(word)
         
 class Processor:
    
