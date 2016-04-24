@@ -128,7 +128,8 @@ class Processor:
                 statement.append(word)
 
     def process_if(self):
-
+        
+        else_body = None
         word = self.word_reader.get_word()
 
         if word != '(':
@@ -143,9 +144,21 @@ class Processor:
 
         body = self.collect_statement_until('}')
 
+        word = self.word_reader.get_word()
+
+        if word != 'else':
+            self.word_reader.put_word(word)
+        else:
+            word = self.word_reader.get_word()
+            if word != '{':
+                raise Exception("Expected '{' got '%s'" % word)
+            else_body = self.collect_statement_until('}')
+
+
         return {
             "cluase": clause,
-            "body": body
+            "body": body,
+            "else_body": else_body
         }
 
     def process_function(self):

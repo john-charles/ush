@@ -4,6 +4,8 @@ ls -al .
 if (which df) {
     echo "df is installed on the system..."  
     echo 'and I\'m echoing with single quotes'
+} else {
+    echo "Df is not available"
 }
 
 function someFunction {
