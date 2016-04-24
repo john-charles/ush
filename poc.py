@@ -86,18 +86,68 @@ class WordReader:
                 word += char
         
 class Processor:
-    
+   
+    reserved = None
     word_reader = None
 
     def __init__(self, file_name):
         self.word_reader = WordReader(file_name)
 
-    
-    def process(self):
-        reserved = {
-        } 
+        self.reserved = {
+                "if": self.process_if
+        }
+
+    def collect_statement_until(self, end):
 
         statement = []
+        statements = []
+
+        while True:
+
+            word = self.word_reader.get_word()
+            if not word:
+                raise Exception("Expected more code...")
+
+            if word == end:
+                if len(statement) > 0:
+                    statements.append(statement)
+                return statements
+
+            if word in self.word_reader.eos:
+                statements.append(statement)
+                statement = []
+
+            elif word in self.reserved:
+                statement.append(self.reserved[word]())
+            else:
+                statement.append(word)
+
+    def process_if(self):
+
+        word = self.word_reader.get_word()
+
+        if word != '(':
+            raise Exception("Expected '(' got '%s'" % word)
+
+        clause = self.collect_statement_until(')')
+
+        word = self.word_reader.get_word()
+
+        if word != '{':
+            raise Exception("Expected '{' got '%s'" % word)
+
+        body = self.collect_statement_until('}')
+
+        return {
+            "cluase": clause,
+            "body": body
+        }
+
+    
+    def process(self):
+
+        statement = []
+        statements = []
 
         while True:
             
@@ -107,10 +157,14 @@ class Processor:
 
             if word in self.word_reader.eos:
                 print "Would evaluate statement: ", statement
+                statements.append(statement)
                 statement = []
 
-            if word not in reserved and word not in self.word_reader.eos:
+            if word not in self.reserved and word not in self.word_reader.eos:
                 statement.append(word)
+
+            if word and word in self.reserved:
+                statement.append(self.reserved[word]())
 
         return statement
         
