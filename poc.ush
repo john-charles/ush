@@ -6,6 +6,10 @@ if (which df) {
     echo 'and I\'m echoing with single quotes'
 }
 
+function someFunction {
+    echo "someFunction was called"
+}
+
 '''
 I'm writing a long line of text....
 Actually I lied I'm writing a multi line stirng

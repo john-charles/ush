@@ -94,7 +94,8 @@ class Processor:
         self.word_reader = WordReader(file_name)
 
         self.reserved = {
-                "if": self.process_if
+                "if": self.process_if,
+                "function": self.process_function
         }
 
     def collect_statement_until(self, end):
@@ -144,6 +145,20 @@ class Processor:
             "body": body
         }
 
+    def process_function(self):
+
+        name = self.word_reader.get_word()
+        word = self.word_reader.get_word()
+
+        if word != '{':
+            raise Exception("Expected '{'got '%s'" % word)
+
+        body = self.collect_statement_until('}')
+
+        return {
+            "name": name,
+            "body": body
+        } 
     
     def process(self):
 
