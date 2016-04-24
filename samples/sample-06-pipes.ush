@@ -1,0 +1,5 @@
+#!/usr/bin/env ush
+cat /etc/hosts | wc -l
+lines_in_hosts_file=$(cat /etc/hosts | wc -l)
+
+cat *.txt | some-command | err > log.txt
