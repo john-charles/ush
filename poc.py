@@ -6,12 +6,51 @@ class WordReader:
     file_name = None
 
     eos = ['\n', ';']
+    specials = ['(', ')']
+    secquence = ['\'', '"']
 
     def __init__(self, file):
         self.file_name = file
         self.stream = open(file, 'rb')
         self.last_words = []
-    
+
+    def read_triplet_secquence(self, triplet):
+
+        secquence = ''
+
+        while not secquence.endswith(triplet):
+            char = self.stream.read(1)
+            if not char:
+                raise Excepton("Unexpected EOF")
+            
+            secquence += char
+
+        return triplet + secquence
+   
+    def read_secquence(self, first):
+         
+        is_escaped = False
+        secquence = str(first)
+       
+        while True:
+            char = self.stream.read(1)
+            if not char:
+                raise Exception("Unexpected eof")
+
+            if char == '\\':
+                is_escaped = True
+            elif is_escaped:
+                secquence += char
+                is_escaped = False
+            elif char == first and len(secquence) == 1:
+                nxt = self.stream.read(1)
+                if nxt == first:
+                    return self.read_triplet_secquence(first * 3)
+            elif char == first:
+                return secquence + char
+            else:
+                secquence += char 
+         
 
     def get_word(self):
 
@@ -34,6 +73,15 @@ class WordReader:
                 return word
             elif char in self.eos and not word:
                 return char 
+            elif char in self.specials and word:
+                self.last_words.append(char)
+                return word
+            elif char in self.secquence and word:
+                raise Exception("Syntax Error, %s%s is invalid!" % (word, char))
+            elif char in self.secquence:
+                return self.read_secquence(char) 
+            elif char in self.specials and not word:
+                return char
             elif char not in eow and char not in self.eos:
                 word += char
         

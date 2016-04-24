@@ -1,3 +1,18 @@
 
 ls -al .
 
+if (which df) {
+    echo "df is installed on the system..."  
+    echo 'and I\'m echoing with single quotes'
+}
+
+'''
+I'm writing a long line of text....
+Actually I lied I'm writing a multi line stirng
+which wraps and includes line breaks...
+'''
+
+"""
+I'm doing the smae thing with the " symbol this time.
+It has some lines"
+"""
