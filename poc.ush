@@ -10,6 +10,9 @@ if (which df) {
 
 function someFunction {
     echo "someFunction was called"
+    if(3 = 5){
+        echo "3 == 5, what?!!!!"
+    }
 }
 
 '''
