@@ -114,7 +114,8 @@ class Processor:
                 return statements
 
             if word in self.word_reader.eos:
-                statements.append(statement)
+                if len(statement) > 0:
+                    statements.append(statement)
                 statement = []
 
             elif word in self.reserved:
