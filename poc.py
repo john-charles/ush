@@ -101,6 +101,18 @@ class Processor:
                 "function": self.process_function
         }
 
+        self.functions = {
+        }
+
+    def evaluate(self, statement):
+
+        print "Evaluating statement: ", statement
+
+        if len(statement) == 1 and isinstance(statement[0], dict):
+            print "Evaluating a block generator...."
+        else:
+            print "Evaluating a standard statement..."
+
     def collect_statement_until(self, end):
 
         statement = []
@@ -179,7 +191,6 @@ class Processor:
     def process(self):
 
         statement = []
-        statements = []
 
         while True:
             
@@ -188,8 +199,7 @@ class Processor:
                 break
 
             if word in self.word_reader.eos:
-                print "Would evaluate statement: ", statement
-                statements.append(statement)
+                self.evaluate(statement)
                 statement = []
 
             if word not in self.reserved and word not in self.word_reader.eos:
@@ -197,11 +207,6 @@ class Processor:
 
             if word and word in self.reserved:
                 statement.append(self.reserved[word]())
-
-        return statement
-        
-        
-        
         
 
 if __name__ == '__main__':
