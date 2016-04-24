@@ -1,0 +1,6 @@
+#!/usr/bin/env ush
+
+for file in .
+    echo $file
+
+

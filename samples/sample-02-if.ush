@@ -1,0 +1,16 @@
+#!/usr/bin/env ush
+
+number = 21
+sring = "my string"
+
+if ($number == 21) {
+    echo "Number $number is 21"
+} 
+
+if($string == "my string){
+    echo "\$string=$string..."
+}
+
+if which ls {
+    echo "ls is installed on this computer..."
+}

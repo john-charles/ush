@@ -1,0 +1,4 @@
+#!/usr/bin/env ush
+
+system_os = $(uname -o)
+
