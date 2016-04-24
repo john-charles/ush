@@ -85,27 +85,34 @@ class WordReader:
             elif char not in eow and char not in self.eos:
                 word += char
         
+class Processor:
+    
+    word_reader = None
 
-def process(word_reader):
-    reserved = {
-    } 
+    def __init__(self, file_name):
+        self.word_reader = WordReader(file_name)
 
-    statement = []
+    
+    def process(self):
+        reserved = {
+        } 
 
-    while True:
-        
-        word = word_reader.get_word()
-        if not word:
-            break
+        statement = []
 
-        if word in word_reader.eos:
-            print "Would evaluate statement: ", statement
-            statement = []
+        while True:
+            
+            word = self.word_reader.get_word()
+            if not word:
+                break
 
-        if word not in reserved and word not in word_reader.eos:
-            statement.append(word)
+            if word in self.word_reader.eos:
+                print "Would evaluate statement: ", statement
+                statement = []
 
-    return statement
+            if word not in reserved and word not in self.word_reader.eos:
+                statement.append(word)
+
+        return statement
         
         
         
@@ -113,6 +120,6 @@ def process(word_reader):
 
 if __name__ == '__main__':
    
-    word_reader = WordReader("poc.ush") 
-    process(word_reader)
+    processor = Processor("poc.ush") 
+    processor.process()
 
