@@ -6,6 +6,9 @@ class String:
     def __init__(self, value):
         self.value = value
 
+    def evaluate(self, scope):
+        pass
+
 class Number:
     value = None
 
@@ -42,6 +45,11 @@ class Function:
         self.statements = statements
 
     def evaluate(self, scope):
+        print "Evaluationg function: ", self.name, self.statements
+        scope.assign_command(self.name, self)
+        pass
+
+    def execute(self, scope):
         pass
 
 
@@ -51,7 +59,7 @@ class Scope:
     values = None
     commands = None
 
-    def __init__(self, parent):
+    def __init__(self, parent=None):
         self.parent = parent
         self.values = {}
         self.commands = {}
@@ -88,9 +96,23 @@ class Statement:
         self.parts = parts
 
     def evaluate(self, scope):
+        print 'evaluating: ', self.parts, scope
         pass
 
+class Decision:
 
+    clause = None
+    main_body = None
+    else_body = None
+
+    def __init__(self, clause, main_body, else_body):
+        self.clause = clause
+        self.main_body = main_body
+        self.else_body = else_body
+
+    def evaluate(self, scope):
+        print "Evaluating decison: ", self.clause, self.main_body, self.else_body
+        pass
 
 
 
@@ -195,11 +217,6 @@ class Processor:
                 "function": self.process_function
         }
 
-        self.functions = {
-        }
-
-        self.values = {}
-
     def evaluate_single_statement(self, statement):
 
         if statement[0][0] == '$' and len(statement) == 3 and statement[1] == '=':
@@ -240,7 +257,7 @@ class Processor:
 
             if word == end:
                 if len(statement) > 0:
-                    statements.append(statement)
+                    statements.append(Statement(statement))
                 return statements
 
             if word in self.word_reader.eos:
@@ -280,12 +297,7 @@ class Processor:
                 raise Exception("Expected '{' got '%s'" % word)
             else_body = self.collect_statement_until('}')
 
-
-        return {
-            "cluase": clause,
-            "body": body,
-            "else_body": else_body
-        }
+        return Decision(clause, body, else_body)
 
     def process_function(self):
 
@@ -297,13 +309,11 @@ class Processor:
 
         body = self.collect_statement_until('}')
 
-        return {
-            "name": name,
-            "body": body
-        } 
+        return Function(name, body)
     
     def process(self):
 
+        scope = Scope()
         statement = []
 
         while True:
@@ -313,14 +323,15 @@ class Processor:
                 break
 
             if word in self.word_reader.eos:
-                self.evaluate(statement)
+                Statement(statement).evaluate(scope)
                 statement = []
 
             if word not in self.reserved and word not in self.word_reader.eos:
                 statement.append(word)
 
             if word and word in self.reserved:
-                statement.append(self.reserved[word]())
+                complex = self.reserved[word]()
+                complex.evaluate(scope)
         
 
 if __name__ == '__main__':
