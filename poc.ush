@@ -15,6 +15,10 @@ function someFunction {
     }
 }
 
+command myCommand {
+    echo "In a pretty awesome command";
+}
+
 '''
 I'm writing a long line of text....
 Actually I lied I'm writing a multi line stirng

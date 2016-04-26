@@ -35,6 +35,24 @@ class Map:
     def __init__(self):
         self.value = {}
 
+class Command:
+
+    name = None
+    statements = None
+
+    def __init__(self, name, statements):
+        self.name = name
+        self.statements = statements
+
+    def evaluate(self, scope):
+        print "Evaluating command: ", self.name, self.statements
+        scope.assign_command(self.name, self)
+        pass
+
+    def execute(self, scope):
+        pass
+
+
 class Function:
 
     name = None
@@ -63,6 +81,9 @@ class Scope:
         self.parent = parent
         self.values = {}
         self.commands = {}
+
+    def __repr__(self):
+        return "Scope(parent=%s)" % self.parent
 
     def resolve_value(self, key):
 
@@ -95,6 +116,8 @@ class Statement:
     def __init__(self, parts):
         self.parts = parts
 
+    def __repr__(self):
+        return "Statement(%s)" % self.parts
     def evaluate(self, scope):
         print 'evaluating: ', self.parts, scope
         pass
@@ -109,6 +132,11 @@ class Decision:
         self.clause = clause
         self.main_body = main_body
         self.else_body = else_body
+
+    def __repr__(self):
+        
+        return "Decision(clause=%s, body=%s, else=%s)" % (
+                self.clause, self.main_body, self.else_body)
 
     def evaluate(self, scope):
         print "Evaluating decison: ", self.clause, self.main_body, self.else_body
@@ -214,34 +242,9 @@ class Processor:
 
         self.reserved = {
                 "if": self.process_if,
+                "command": self.process_command,
                 "function": self.process_function
         }
-
-    def evaluate_single_statement(self, statement):
-
-        if statement[0][0] == '$' and len(statement) == 3 and statement[1] == '=':
-            self.values[statement[0]] = statement[2]
-
-        
-
-
-    def evaluate(self, statement):
-
-        print "Evaluating statement: ", statement
-
-        if len(statement) == 1 and isinstance(statement[0], dict):
-            print "Evaluating a block generator...."
-            
-            generator = statement[0]
-
-            if 'name' in generator:
-                self.functions[generator['name']] = generator
-
-
-            
-        else:
-            print "Evaluating a standard statement..."
-
 
 
     def collect_statement_until(self, end):
@@ -262,7 +265,7 @@ class Processor:
 
             if word in self.word_reader.eos:
                 if len(statement) > 0:
-                    statements.append(statement)
+                    statements.append(Statement(statement))
                 statement = []
 
             elif word in self.reserved:
@@ -311,6 +314,18 @@ class Processor:
 
         return Function(name, body)
     
+    def process_command(self):
+
+        name = self.word_reader.get_word()
+        word = self.word_reader.get_word()
+
+        if word != '{':
+            raise Exception("Expected '{'got '%s'" % word)
+
+        body = self.collect_statement_until('}')
+
+        return Command(name, body)
+
     def process(self):
 
         scope = Scope()
