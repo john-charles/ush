@@ -35,6 +35,16 @@ class Map:
     def __init__(self):
         self.value = {}
 
+class MapDecleration:
+
+    statements = []
+
+    def __init__(self, statements):
+        self.statements = statements
+
+    def __repr__(self):
+        return "MapDecleration(%s)" % self.statements
+
 class Command:
 
     name = None
@@ -53,24 +63,6 @@ class Command:
         pass
 
 
-class FunctionBlock:
-
-    statements = None
-
-    def __init__(self, statements):
-        self.statements = statements
-
-    def __repr__(self):
-        return "AnonymousBlock(%s)" % self.statements
-
-    def evaluate(self, scope):
-        print "Evaluationg function: ", self.statements
-        pass
-
-    def execute(self, scope):
-        pass
-
-
 class Function:
 
     name = None
@@ -79,6 +71,10 @@ class Function:
     def __init__(self, name, statements):
         self.name = name
         self.statements = statements
+
+    def __repr__(self):
+        return "Function(name=%s, statements=%s)" % (
+                self.name, self.statements)
 
     def evaluate(self, scope):
         print "Evaluationg function: ", self.name, self.statements
@@ -285,9 +281,9 @@ class Processor:
                 if len(statement) > 0:
                     statements.append(Statement(statement))
                 statement = []
-
             elif word == '{':
-                statement.append(FunctionBlock(self.collect_statement_until('}')))
+                statement.append(MapDecleration(self.collect_statement_until('}')))
+
             elif word in self.reserved:
                 statement.append(self.reserved[word]())
             else:
@@ -325,10 +321,14 @@ class Processor:
     def process_function(self):
 
         name = self.word_reader.get_word()
-        word = self.word_reader.get_word()
+        if name == '{':
+            name = "<anonymoust>"
+        else:
 
-        if word != '{':
-            raise Exception("Expected '{'got '%s'" % word)
+            word = self.word_reader.get_word()
+
+            if word != '{':
+                raise Exception("Expected '{'got '%s'" % word)
 
         body = self.collect_statement_until('}')
 
@@ -362,7 +362,7 @@ class Processor:
                 statement = []
 
             elif word == '{':
-                statement.append(FunctionBlock(self.collect_statement_until('}')))
+                statement.append(MapDecleration(self.collect_statement_until('}')))
 
 
             elif word not in self.reserved and word not in self.word_reader.eos:

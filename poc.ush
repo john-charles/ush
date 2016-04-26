@@ -30,13 +30,21 @@ I'm doing the smae thing with the " symbol this time.
 It has some lines"
 """
 
-@someFunction "Argument" 1 null {
+$describes = [];
+
+function describe {
+    
+    $describes.push { name: $1, block: $2 }
+
+}
+
+@someFunction "Argument" 1 null function {
     echo "Block";
 }
 
-@describe "writing a spec in universal shell" {
-    
-    @it "should be able to have nexted anonymous blocks" {
-        echo "And we're in a nested block..."
-    }
+@describe "writing a spec in universal shell" function {
+
+    @it "should be able to have nested functions" function {
+        echo "In a nested function"
+    }    
 }
