@@ -53,6 +53,24 @@ class Command:
         pass
 
 
+class FunctionBlock:
+
+    statements = None
+
+    def __init__(self, statements):
+        self.statements = statements
+
+    def __repr__(self):
+        return "AnonymousBlock(%s)" % self.statements
+
+    def evaluate(self, scope):
+        print "Evaluationg function: ", self.statements
+        pass
+
+    def execute(self, scope):
+        pass
+
+
 class Function:
 
     name = None
@@ -268,6 +286,8 @@ class Processor:
                     statements.append(Statement(statement))
                 statement = []
 
+            elif word == '{':
+                statement.append(FunctionBlock(self.collect_statement_until('}')))
             elif word in self.reserved:
                 statement.append(self.reserved[word]())
             else:
@@ -341,10 +361,14 @@ class Processor:
                 Statement(statement).evaluate(scope)
                 statement = []
 
-            if word not in self.reserved and word not in self.word_reader.eos:
+            elif word == '{':
+                statement.append(FunctionBlock(self.collect_statement_until('}')))
+
+
+            elif word not in self.reserved and word not in self.word_reader.eos:
                 statement.append(word)
 
-            if word and word in self.reserved:
+            elif word and word in self.reserved:
                 complex = self.reserved[word]()
                 complex.evaluate(scope)
         
