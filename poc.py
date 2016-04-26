@@ -28,6 +28,16 @@ class Array:
     def __init__(self):
         self.value = []
 
+class ArrayDecleration:
+    
+    statements = None
+
+    def __init__(self, statements):
+        self.statements = statements
+
+    def __repr__(self):
+        return "ArrayDecleration(%s)" % self.statements
+
 class Map:
 
     value = None
@@ -164,7 +174,7 @@ class WordReader:
     file_name = None
 
     eos = ['\n', ';']
-    specials = ['(', ')', ':', ',']
+    specials = ['(', ')', ':', ',', '[',']']
     secquence = ['\'', '"']
 
     def __init__(self, file):
@@ -282,8 +292,12 @@ class Processor:
                 if len(statement) > 0:
                     statements.append(Statement(statement))
                 statement = []
+
             elif word == '{':
                 statement.append(MapDecleration(self.collect_statement_until('}')))
+            
+            elif word == '[':
+                statement.append(ArrayDecleration(self.collect_statement_until(']')))
 
             elif word in self.reserved:
                 statement.append(self.reserved[word]())
@@ -364,7 +378,8 @@ class Processor:
 
             elif word == '{':
                 statement.append(MapDecleration(self.collect_statement_until('}')))
-
+            elif word == '[':
+                statement.append(ArrayDecleration(self.collect_statement_until(']')))
 
             elif word not in self.reserved and word not in self.word_reader.eos:
                 statement.append(word)
