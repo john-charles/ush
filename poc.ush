@@ -34,7 +34,10 @@ $describes = [];
 
 function describe {
     
-    $describes.push { name: $1, block: $2 }
+    $describes.push {
+         name: $1,
+         'block': $2
+     }
 
 }
 

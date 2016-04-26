@@ -1,0 +1,6 @@
+
+
+$array.push {
+    name: "john",
+    "age": 33
+}

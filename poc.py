@@ -164,7 +164,7 @@ class WordReader:
     file_name = None
 
     eos = ['\n', ';']
-    specials = ['(', ')']
+    specials = ['(', ')', ':', ',']
     secquence = ['\'', '"']
 
     def __init__(self, file):
@@ -269,6 +269,7 @@ class Processor:
         while True:
 
             word = self.word_reader.get_word()
+            
             if not word:
                 raise Exception("Expected more code...")
 
@@ -374,7 +375,9 @@ class Processor:
         
 
 if __name__ == '__main__':
-   
-    processor = Processor("poc.ush") 
+  
+    import sys
+
+    processor = Processor(sys.argv[1]) 
     processor.process()
 
