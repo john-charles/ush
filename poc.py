@@ -174,7 +174,7 @@ class WordReader:
     file_name = None
 
     eos = ['\n', ';']
-    specials = ['(', ')', ':', ',', '[',']']
+    specials = ['(', ')', ':', ',', '[',']', '|', '>', '<' '=', '!']
     secquence = ['\'', '"']
 
     def __init__(self, file):
